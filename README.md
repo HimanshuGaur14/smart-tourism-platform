@@ -231,7 +231,16 @@ The API validates its configuration on start-up and exits with a readable messag
 The 35 seeded destinations (19 states and union territories) live in `apps/api/prisma/seed-data/destinations.ts`, each with Wikipedia source links. They were written from general reference knowledge because the build environment could not reach external sites, so:
 
 - coordinates are approximate and stored with `coordinatesVerified = false`; the UI says "Approximate location";
-- no photos are seeded; cards show a styled placeholder until verified, attributed photos are added.
+- no photos are seeded; cards show a styled placeholder until photos are added.
+
+To add photos, run this on a machine with internet access (it never replaces or deletes existing photos):
+
+```bash
+npm run photos:fetch -- --dry-run   # preview what would be added
+npm run photos:fetch                # save them
+```
+
+For each destination without a photo it takes the lead image of the linked Wikipedia article, keeps it only if the file is on Wikimedia Commons under a free licence (CC0, CC BY, CC BY-SA or public domain), and stores the author, licence and source page, which the destination page displays. Destinations whose article has no suitable image keep the placeholder; add those by hand in Admin, Destinations. Check that each photo shows the right place.
 
 Please review the facts and coordinates against the cited sources before any public demo.
 

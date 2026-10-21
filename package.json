@@ -34,7 +34,8 @@
     "db:studio": "npm run db:studio -w @smart-tourism/api",
     "db:setup": "npm run db:deploy && npm run db:seed",
     "test:e2e": "npm run test:e2e -w @smart-tourism/web",
-    "user:create-admin": "npm run user:create-admin -w @smart-tourism/api"
+    "user:create-admin": "npm run user:create-admin -w @smart-tourism/api",
+    "photos:fetch": "npm run photos:fetch -w @smart-tourism/api --"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
