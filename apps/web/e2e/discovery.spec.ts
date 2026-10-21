@@ -95,7 +95,7 @@ test('destination detail page from a card, with nearby places', async ({ page })
   await expect(page).toHaveTitle('Netarhat · Yatra Atlas');
   await expect(page.getByText('Approximate location.')).toBeVisible();
   await expect(page.getByText('Demo forecast')).toBeVisible();
-  await expect(page.getByText(/not real predictions/)).toBeVisible();
+  await expect(page.getByRole('main').getByText(/not real predictions/)).toBeVisible();
   await expect(page.getByRole('link', { name: 'Betla National Park' })).toBeVisible();
   await expectNoSeriousA11yIssues(page);
 });

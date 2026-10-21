@@ -158,6 +158,18 @@ Browser tests register throwaway `e2e-…@example.com` accounts in your developm
 | `prettier --check` fails on every file (Windows)           | The checkout has CRLF endings from before `.gitattributes`: run `git add --renormalize .` or re-clone. |
 | PowerShell blocks `npm` with an execution-policy error     | Run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once.                                        |
 
+### 7. AI travel assistant (optional)
+
+The "AI Assistant" tab on the right edge of every page shows the chatbot from the separate `tourism_ml` FastAPI service in a side panel. Single click opens or closes the panel; double click, or the window icon in the panel header, opens the chat in a popup window instead.
+
+Start the chat service in its own terminal (from the `tourism_ml` folder, after `pip install -r requirements.txt`):
+
+```bash
+uvicorn app.main:app
+```
+
+The panel loads `VITE_CHAT_URL` (default `http://127.0.0.1:8000/chat-ui`); change it in `.env` when the service runs elsewhere, and restart `npm run dev:web`. If the site is served over https, the chat service must be https too. The panel and the popup keep separate chat histories. The chat's numbers come from a model trained on synthetic data, and the panel says so.
+
 ### Database commands
 
 | Command              | What it does                                                        |

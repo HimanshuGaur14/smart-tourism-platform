@@ -176,7 +176,9 @@ describe('Intelligence dashboard', () => {
       ),
     ).toBeInTheDocument();
     expect(await screen.findByText(DISCLAIMER)).toBeInTheDocument();
-    expect(await screen.findByText(/not real predictions/i)).toBeInTheDocument();
+    expect(
+      await within(screen.getByRole('main')).findByText(/not real predictions/i),
+    ).toBeInTheDocument();
     expect(screen.getAllByText(/demo data/i).length).toBeGreaterThanOrEqual(6);
     expect(screen.queryByText(/accuracy|confidence/i)).not.toBeInTheDocument();
   });

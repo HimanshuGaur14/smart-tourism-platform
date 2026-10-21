@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Outlet, ScrollRestoration, useLocation } from 'react-router';
+import { AssistantPanel } from '../features/assistant/assistant-panel';
 import { SiteFooter } from './site-footer';
 import { SiteHeader } from './site-header';
 
@@ -30,6 +31,7 @@ export function RootLayout() {
         <Outlet />
       </main>
       <SiteFooter />
+      <AssistantPanel />
       <ScrollRestoration />
     </div>
   );
