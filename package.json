@@ -1,0 +1,58 @@
+{
+  "name": "smart-tourism-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pan-India tourism discovery and intelligence platform (SIH PS 25032).",
+  "type": "module",
+  "engines": {
+    "node": ">=20.12"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run build -w @smart-tourism/contracts && concurrently -n contracts,api,web -c gray,green,yellow \"npm run dev -w @smart-tourism/contracts\" \"npm run dev -w @smart-tourism/api\" \"npm run dev -w @smart-tourism/web\"",
+    "dev:api": "npm run build -w @smart-tourism/contracts && npm run dev -w @smart-tourism/api",
+    "dev:web": "npm run build -w @smart-tourism/contracts && npm run dev -w @smart-tourism/web",
+    "build": "npm run build -w @smart-tourism/contracts && npm run build -w @smart-tourism/api && npm run build -w @smart-tourism/web",
+    "start": "npm run start -w @smart-tourism/api",
+    "typecheck": "npm run build -w @smart-tourism/contracts && npm run typecheck --workspaces --if-present",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "npm run build -w @smart-tourism/contracts && npm run test --workspaces --if-present",
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm run test && npm run build",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down",
+    "db:generate": "npm run db:generate -w @smart-tourism/api",
+    "db:migrate": "npm run db:migrate -w @smart-tourism/api",
+    "db:deploy": "npm run db:deploy -w @smart-tourism/api",
+    "db:seed": "npm run db:seed -w @smart-tourism/api",
+    "db:status": "npm run db:status -w @smart-tourism/api",
+    "db:studio": "npm run db:studio -w @smart-tourism/api",
+    "db:setup": "npm run db:deploy && npm run db:seed",
+    "test:e2e": "npm run test:e2e -w @smart-tourism/web",
+    "user:create-admin": "npm run user:create-admin -w @smart-tourism/api"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "concurrently": "^10.0.6",
+    "eslint": "^10.13.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.7",
+    "globals": "^17.13.0",
+    "prettier": "^3.9.10",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.72.0",
+    "vitest": "^5.0.5",
+    "playwright-core": "1.56.1"
+  },
+  "overrides": {
+    "@axe-core/playwright": {
+      "playwright-core": "$playwright-core"
+    }
+  }
+}

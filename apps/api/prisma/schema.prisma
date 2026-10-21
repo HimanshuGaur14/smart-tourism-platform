@@ -1,0 +1,273 @@
+// Smart Tourism Platform relational schema (PostgreSQL).
+// Connection URL lives in prisma.config.ts (Prisma 7); never hardcode credentials here.
+
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  TOURIST
+  VENDOR
+  ADMIN
+}
+
+enum ListingType {
+  HOMESTAY
+  GUIDE
+  ARTISAN
+  HANDICRAFT
+  CULTURAL_EXPERIENCE
+}
+
+enum ModerationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum EnquiryStatus {
+  NEW
+  RESPONDED
+  CLOSED
+}
+
+enum CrowdLevel {
+  LOW
+  MODERATE
+  HIGH
+  VERY_HIGH
+}
+
+/// DEMO = illustrative values; MODEL = produced by the ML service.
+enum ForecastSourceType {
+  DEMO
+  MODEL
+}
+
+model User {
+  id           String   @id @default(cuid())
+  /// Stored lower-cased.
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         UserRole @default(TOURIST)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sessions          Session[]
+  savedDestinations SavedDestination[]
+  itineraries       Itinerary[]
+  listings          VendorListing[]
+  enquiries         Enquiry[]
+}
+
+/// Server-side session. `id` is a SHA-256 hash of the cookie token, never the raw token.
+model Session {
+  id         String   @id
+  userId     String
+  csrfToken  String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  lastSeenAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model DestinationCategory {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  /// Restrict: a category in use cannot be deleted.
+  destinations Destination[]
+}
+
+model Destination {
+  id                  String   @id @default(cuid())
+  slug                String   @unique
+  name                String
+  state               String
+  district            String
+  categoryId          String
+  shortDescription    String
+  description         String
+  latitude            Float
+  longitude           Float
+  /// False until coordinates are checked against a cited source; UI labels unverified locations.
+  coordinatesVerified Boolean  @default(false)
+  tags                String[]
+  bestTimeToVisit     String?
+  responsibleTips     String[]
+  /// Reference URLs used to write or check this record.
+  sourceUrls          String[]
+  featured            Boolean  @default(false)
+  hiddenGem           Boolean  @default(false)
+  published           Boolean  @default(true)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  category       DestinationCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  images         DestinationImage[]
+  savedBy        SavedDestination[]
+  itineraryItems ItineraryItem[]
+  listings       VendorListing[]
+  forecasts      Forecast[]
+
+  @@index([published, featured])
+  @@index([published, hiddenGem])
+  @@index([state])
+  @@index([categoryId])
+  @@index([name])
+  @@index([tags], type: Gin)
+}
+
+model DestinationImage {
+  id            String  @id @default(cuid())
+  destinationId String
+  url           String
+  alt           String
+  credit        String?
+  license       String?
+  sourceUrl     String?
+  position      Int     @default(0)
+
+  destination Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+
+  @@unique([destinationId, position])
+}
+
+model SavedDestination {
+  userId        String
+  destinationId String
+  createdAt     DateTime @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  destination Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+
+  @@id([userId, destinationId])
+  @@index([destinationId])
+}
+
+model Itinerary {
+  id           String    @id @default(cuid())
+  userId       String
+  title        String
+  startDate    DateTime? @db.Date
+  durationDays Int?
+  interests    String[]
+  notes        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  user  User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items ItineraryItem[]
+
+  @@index([userId, updatedAt])
+}
+
+model ItineraryItem {
+  id            String  @id @default(cuid())
+  itineraryId   String
+  /// Restrict: destinations referenced by itineraries are unpublished, not deleted.
+  destinationId String
+  position      Int
+  dayNumber     Int?
+  notes         String?
+
+  itinerary   Itinerary   @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
+  destination Destination @relation(fields: [destinationId], references: [id], onDelete: Restrict)
+
+  @@index([itineraryId, position])
+  @@index([destinationId])
+}
+
+model VendorListing {
+  id               String           @id @default(cuid())
+  slug             String           @unique
+  vendorId         String
+  destinationId    String?
+  type             ListingType
+  title            String
+  summary          String
+  description      String
+  state            String
+  district         String
+  /// Free-text indication only; payments are out of scope.
+  priceInfo        String?
+  imageUrl         String?
+  isActive         Boolean          @default(true)
+  moderationStatus ModerationStatus @default(PENDING)
+  moderationNote   String?
+  /// True for illustrative listings created by the seed; the UI labels them "Sample listing".
+  isSample         Boolean          @default(false)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  vendor      User         @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  destination Destination? @relation(fields: [destinationId], references: [id], onDelete: SetNull)
+  enquiries   Enquiry[]
+
+  @@index([vendorId])
+  @@index([destinationId])
+  @@index([type])
+  @@index([isActive, moderationStatus])
+}
+
+model Enquiry {
+  id         String        @id @default(cuid())
+  listingId  String
+  /// Null for guest enquiries or if the account is deleted.
+  userId     String?
+  name       String
+  email      String
+  phone      String?
+  message    String
+  travelDate DateTime?     @db.Date
+  groupSize  Int?
+  status     EnquiryStatus @default(NEW)
+  createdAt  DateTime      @default(now())
+
+  listing VendorListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  user    User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([listingId, createdAt])
+  @@index([userId, createdAt])
+}
+
+/// Kept separate from Destination so model output can be versioned and replaced.
+model Forecast {
+  id                String             @id @default(cuid())
+  destinationId     String
+  forecastDate      DateTime           @db.Date
+  predictedVisitors Int
+  crowdLevel        CrowdLevel
+  /// Days between generatedAt and forecastDate.
+  forecastHorizon   Int
+  modelVersion      String
+  generatedAt       DateTime
+  sourceType        ForecastSourceType
+  /// Only stored when the model genuinely provides an interval.
+  lowerBound        Int?
+  upperBound        Int?
+  intervalLevel     Float?
+  createdAt         DateTime           @default(now())
+
+  destination Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+
+  @@unique([destinationId, forecastDate, sourceType, modelVersion])
+  @@index([forecastDate])
+}

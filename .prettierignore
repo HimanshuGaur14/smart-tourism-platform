@@ -1,0 +1,8 @@
+node_modules
+dist
+coverage
+package-lock.json
+*.tsbuildinfo
+apps/api/src/generated
+test-results
+playwright-report

@@ -1,0 +1,96 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens. Tailwind v4 reads these from CSS (no tailwind.config.js).
+ * Palette: forest green, warm ivory, muted terracotta, charcoal.
+ * `static` emits every token as a CSS variable, even if no utility uses it yet.
+ */
+@theme static {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Fraunces', ui-serif, Georgia, 'Times New Roman', serif;
+
+  --color-forest-50: #eef4f0;
+  --color-forest-100: #d5e5da;
+  --color-forest-200: #aecbb8;
+  --color-forest-300: #7fab90;
+  --color-forest-400: #548a6c;
+  --color-forest-500: #3a6f53;
+  --color-forest-600: #2b5a43;
+  --color-forest-700: #1f4d3a;
+  --color-forest-800: #183b2d;
+  --color-forest-900: #112a20;
+
+  --color-ivory-50: #fcfaf5;
+  --color-ivory-100: #f7f3ea;
+  --color-ivory-200: #efe8d8;
+  --color-ivory-300: #e2d7c0;
+
+  --color-terracotta-50: #fbf0eb;
+  --color-terracotta-100: #f4dacd;
+  --color-terracotta-200: #e9b49c;
+  --color-terracotta-300: #db8d6d;
+  --color-terracotta-400: #c0694a;
+  --color-terracotta-500: #a8553a;
+  --color-terracotta-600: #8a442f;
+  --color-terracotta-700: #6c3525;
+
+  --color-charcoal-50: #f4f4f3;
+  --color-charcoal-100: #e4e4e2;
+  --color-charcoal-200: #c8c7c4;
+  --color-charcoal-300: #a09f9a;
+  --color-charcoal-400: #77766f;
+  --color-charcoal-500: #5a5953;
+  --color-charcoal-600: #45443f;
+  --color-charcoal-700: #33322e;
+  --color-charcoal-800: #262522;
+  --color-charcoal-900: #1b1a18;
+
+  --radius-card: 0.75rem;
+  --shadow-card: 0 1px 2px rgb(27 26 24 / 0.05), 0 2px 8px rgb(27 26 24 / 0.04);
+  --shadow-raised: 0 4px 16px rgb(27 26 24 / 0.08), 0 1px 3px rgb(27 26 24 / 0.06);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-ivory-50 font-sans text-charcoal-800 antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display text-charcoal-900;
+    letter-spacing: -0.015em;
+  }
+
+  /* Visible, consistent keyboard focus everywhere. */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-terracotta-500;
+  }
+
+  ::selection {
+    @apply bg-forest-100 text-forest-900;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@utility eyebrow {
+  @apply text-xs font-semibold tracking-[0.14em] text-terracotta-600 uppercase;
+}
+
+@utility container-page {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Layered green hills and a river at sunrise">
+  <rect width="1200" height="800" fill="#f4dacd"/>
+  <rect y="0" width="1200" height="420" fill="#f7f3ea"/>
+  <circle cx="830" cy="300" r="96" fill="#db8d6d"/>
+  <path d="M0 430 C140 360 260 380 380 340 C520 290 640 360 760 330 C900 295 1040 340 1200 300 L1200 800 L0 800Z" fill="#aecbb8"/>
+  <path d="M0 500 C160 440 300 470 430 430 C580 385 700 460 860 420 C1000 385 1100 420 1200 400 L1200 800 L0 800Z" fill="#7fab90"/>
+  <path d="M0 580 C180 520 330 560 480 520 C640 478 760 545 920 510 C1050 482 1130 500 1200 492 L1200 800 L0 800Z" fill="#3a6f53"/>
+  <path d="M520 800 C560 700 640 650 720 610 C780 580 860 570 920 560 C870 590 820 620 790 660 C750 710 740 760 760 800Z" fill="#efe8d8" opacity="0.85"/>
+  <path d="M0 660 C200 610 360 650 520 620 C660 594 760 650 900 640 C1030 630 1120 650 1200 640 L1200 800 L0 800Z" fill="#1f4d3a"/>
+  <g fill="#112a20">
+    <path d="M110 640 l18 -60 l18 60z"/><path d="M140 648 l14 -46 l14 46z"/>
+    <path d="M1010 636 l20 -66 l20 66z"/><path d="M1046 642 l15 -50 l15 50z"/>
+    <path d="M300 654 l16 -52 l16 52z"/>
+  </g>
+</svg>
